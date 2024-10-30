@@ -33,7 +33,7 @@ const result4 = currySum(3)(5, 8);
 console.log(result3);
 console.log(result4);
 
-// Difference between the two solutions is in the way we can call it like that - see curry-v2 for working version
+// Difference between the two solutions is in the way we can call it like that
 const result11 = currySum(1, 2);
 const result12 = currySum(3);
 
