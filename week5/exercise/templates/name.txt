@@ -1,0 +1,6 @@
+<h1>Name</h1>
+<p>{{name}}</p>
+<p>{{name}}</p>
+<p>{{name}}</p>
+<p>{{name}}</p>
+<p>{{age}}</p>
