@@ -8,18 +8,15 @@ const serverErrorHandler = (err) => {
   console.error(err);
 };
 
-/** Exercise 1 & 4 */
+/** Exercise 1, 4, 5 */
 const getRequestHandler = (req, res) => {
   const parsedUrl = url.parse(req.url, true);
   const reqPath = parsedUrl.pathname;
   const matchFetchTemplate = reqPath.match(/^\/fetchTemplate\/(.+)$/); // Example URL : http://localhost:3000/fetchTemplate/home?name=John%20Doe
   const matchLoadProp = reqPath.match(/^\/loadProp\/(.+)$/); // Example URL : http://localhost:3000/loadProp/name
+  const matchStorePosts = reqPath.match(/^\/storeUserPosts\/(\d+)$/); // Example URL : http://localhost:3000/storeUserPosts/1
 
-  if (!matchFetchTemplate && !matchLoadProp) {
-    res.writeHead(200, { "Content-Type": "text/plain" });
-    res.write("GET request");
-    res.end();
-  } else if (matchFetchTemplate) {
+  if (matchFetchTemplate) {
     /** Exercise 1 */
     const templateName = matchFetchTemplate[1];
     if (templateName === "home") {
@@ -29,6 +26,15 @@ const getRequestHandler = (req, res) => {
     /** Exercise 4 */
     const propName = matchLoadProp[1];
     loadPropHandler(propName, res);
+  } else if (matchStorePosts) {
+    /** Exercise 5 */
+    const userId = matchStorePosts[1];
+
+    fetchUserPosts(res, userId, savePostsToFile);
+  } else {
+    res.writeHead(200, { "Content-Type": "text/plain" });
+    res.write("GET request");
+    res.end();
   }
 };
 
@@ -118,6 +124,53 @@ const loadPropHandler = (propName, res) => {
     : res.write("Property not found");
 
   res.end();
+};
+
+const fetchUserPosts = (res, userId, callback) => {
+  const url = `https://jsonplaceholder.typicode.com/posts?userId=${userId}`;
+  https
+    .get(url, (usersResponse) => {
+      let data = "";
+
+      usersResponse.on("data", (chunk) => {
+        data += chunk;
+      });
+
+      usersResponse.on("end", () => {
+        try {
+          const posts = JSON.parse(data);
+          callback(res, null, posts, userId);
+        } catch (error) {
+          callback(res, error);
+        }
+      });
+    })
+    .on("error", (err) => {
+      callback(err);
+    });
+};
+
+const savePostsToFile = (res, err, posts, userId) => {
+  if (err) {
+    res.writeHead(500, { "Content-Type": "text/plain" });
+    res.end("Error fetching user posts");
+    return;
+  }
+
+  const dir = path.join(__dirname, "data");
+  const filePath = path.join(dir, `${userId}.txt`);
+
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  }
+
+  const content = posts
+    .map((post) => `Title: ${post.title}\nBody: ${post.body}\n`)
+    .join("\n---\n");
+  fs.writeFileSync(filePath, content, "utf8");
+
+  res.writeHead(200, { "Content-Type": "text/plain" });
+  res.end(`Posts for user ${userId} have been saved to /data/${userId}.txt`);
 };
 
 /** HTTP server */
