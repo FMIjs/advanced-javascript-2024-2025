@@ -58,4 +58,35 @@ const alphabetTree = {
       },
     },
   },
+
+  [Symbol.iterator]: function* () {
+    // yield* iter(this);
+    yield* imperativeIter(this);
+  },
 };
+
+const iter = function* (node) {
+  if (node === null) {
+    return;
+  }
+  yield* iter(node.left);
+  yield node.value;
+  yield* iter(node.right);
+};
+
+const imperativeIter = function* (node) {
+  if (node === null) {
+    return;
+  }
+  for (const n of imperativeIter(node.left)) {
+    yield n;
+  }
+  yield node.value;
+  for (const n of imperativeIter(node.right)) {
+    yield n;
+  }
+}
+
+for (const node of alphabetTree) {
+  console.log(node);
+}
