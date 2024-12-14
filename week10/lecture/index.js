@@ -13,7 +13,7 @@ function auth(req, res, next) {
 }
 
 function restrict(req, res, next) {
-  if (!req.ddecoded) res.status(401).end();
+  if (!req.decoded) res.status(401).end();
   next();
 }
 
