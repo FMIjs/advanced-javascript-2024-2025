@@ -1,0 +1,15 @@
+node_modules/
+npm-debug.log
+.DS_Store
+.idea/
+*.env
+*.log
+dist/
+build/
+coverage/
+*.pem
+*.key
+*.crt
+*.cert
+*.jks
+*.p12
