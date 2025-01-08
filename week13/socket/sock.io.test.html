@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Socket.IO Multiple Messages</title>
+    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+    <style>
+        .time {
+            color: blue;
+        }
+
+        .echo {
+            color: green;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <input type="text" id="messageInput">
+        <button onclick="sendMessage('room1')">Send to Room 1</button>
+        <button onclick="sendMessage('room2')">Send to Room 2</button>
+    </div>
+    <div>
+        <h3>Server Time:</h3>
+        <div id="timeDisplay"></div>
+        <h3>Echo Messages:</h3>
+        <div id="echoDisplay"></div>
+    </div>
+
+    <script>
+        const socket = io("localhost:8080");
+
+        // Handle server time updates
+        socket.on('server-time', (time) => {
+            document.getElementById('timeDisplay').innerHTML =
+                `<div class="time">${time}</div>`;
+        });
+
+        // Handle room joined
+        socket.on('room-joined', (room) => {
+            document.getElementById('echoDisplay').innerHTML +=
+                `<div class="echo">You just joined room ${room}</div>`;
+        });
+
+        // Handle echo responses
+        socket.on('echo-response', (msg) => {
+            document.getElementById('echoDisplay').innerHTML +=
+                `<div class="echo">${msg}</div>`;
+        });
+
+        // Send echo message
+        function sendMessage(room) {
+            const input = document.getElementById('messageInput');
+            socket.emit('echo-message', { message: input.value, room });
+            input.value = '';
+        }
+    </script>
+</body>
+
+</html>

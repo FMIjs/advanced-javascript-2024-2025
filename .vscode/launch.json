@@ -8,10 +8,9 @@
       "type": "node",
       "request": "launch",
       "name": "Launch My program",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
-      "program": "${file}"
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${file}",
+      "runtimeExecutable": "/Users/diana/.nvm/versions/node/v20.11.1/bin/node"
     }
   ]
 }
