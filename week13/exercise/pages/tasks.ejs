@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Manager</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body>
+
+
+  <%- include('partial/header') %>
+    <div class="container">
+      <h1>Task Manager - List</h1>
+      <ul>
+        <% tasks.forEach((task, index)=> { %>
+          <li>
+            <%= task %>
+              <button onclick="deleteTask('<%= task %>')">Delete</button>
+          </li>
+          <% }) %>
+      </ul>
+    </div>
+
+    <script>
+      function deleteTask(task) {
+        fetch(`/task`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ task: task })
+        })
+          .then(data => {
+            location.reload();
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while deleting the task');
+          });
+      }
+    </script>
+</body>
+
+</html>
